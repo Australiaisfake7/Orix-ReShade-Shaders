@@ -1,12 +1,20 @@
 const static int sobelX[] = { -1, 0, 1, -2, 0, 2, -1, 0, 1 };
 const static int sobelY[] = { 1, 2, 1, 0, 0, 0, -1, -2, -1 };
+
+static int bayer8x8[64] =
+{
+    0, 32, 8, 40, 2, 34, 10, 42,
+ 48, 16, 56, 24, 50, 18, 58, 26,
+ 12, 44, 4, 36, 14, 46, 6, 38,
+ 60, 28, 52, 20, 62, 30, 54, 22,
+  3, 35, 11, 43, 1, 33, 9, 41,
+ 51, 19, 59, 27, 49, 17, 57, 25,
+ 15, 47, 7, 39, 13, 45, 5, 37,
+ 63, 31, 55, 23, 61, 29, 53, 21
+};
+
 const static float pi = 3.14159265359;
 const static float epsilon = 1e-9;
-
-float Luminance(float3 color)
-{
-    return dot(color, float3(0.2126, 0.7152, 0.0722));
-}
 
 float3 Convolve(float2 uv, int kernel[9], sampler2D buffer)
 {
@@ -74,6 +82,11 @@ float3 LinearToSRGB(float3 color)
         l.b = pow(color.b, 1.0 / 2.4) * 1.055 - 0.055;
 
     return l;
+}
+
+float Luminance(float3 color)
+{
+    return dot(SRGBToLinear(color), float3(0.2126, 0.7152, 0.0722));
 }
 
 float3 LinearToOklab(float3 color)
